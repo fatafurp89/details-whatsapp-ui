@@ -561,8 +561,8 @@
   position: relative;
 }
 .conversation-header {
-  min-height: 81px;
-  padding: 16px 21px;
+  min-height: 64px;
+  padding: 10px 21px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -577,13 +577,16 @@
   min-width: 0;
 }
 .contact-heading h3 {
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
   overflow-wrap: anywhere;
 }
 .contact-heading p {
-  font-size: 11px;
-  color: var(--muted-foreground);
-  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-top: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -626,9 +629,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 11px 22px;
-  font-size: 10px;
-  color: var(--muted-foreground);
+  padding: 6px 21px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--foreground);
   border-bottom: 1px solid var(--border);
   background: var(--card);
 }
@@ -636,10 +640,14 @@
   display: flex;
   gap: 6px;
   align-items: center;
+  font-weight: 700;
   color: var(--primary);
 }
 .window-strip.closed span {
-  color: var(--gold);
+  color: color-mix(in oklch, var(--gold) 70%, var(--destructive));
+}
+.window-strip small {
+  font-weight: 600;
 }
 .messages {
   padding: 22px 25px 12px;

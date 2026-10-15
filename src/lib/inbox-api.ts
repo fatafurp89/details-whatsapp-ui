@@ -87,7 +87,7 @@ export type Message = {
   body: string | null;
   status: string;
   status_at?: string;
-  error?: string | null;
+  error?: string | { message?: string; code?: number } | null;
   template_name?: string | null;
   sent_by_no?: string | null;
   sent_by_name?: string | null;

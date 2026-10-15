@@ -59,6 +59,17 @@ const typeNames: Record<Message["type"], string> = {
   template: "قالب",
   unknown: "رسالة غير معروفة",
 };
+// واتساب (Meta) أحيانًا يخزّن خطأ الإرسال ككائن بنية {code, message} بدل نص — عرضه مباشرة كـ children
+// يُسقط React بخطأ #31 (كائن غير صالح كـ child). نحوّله دائمًا إلى نص آمن قبل العرض.
+function errorText(error: Message["error"]): string {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === "string") return message;
+    try { return JSON.stringify(error); } catch { /* ignore */ }
+  }
+  return "فشل الإرسال";
+}
 function Delivery({ status }: { status: string }) {
   if (status === "read")
     return <CheckCheck size={13} className="delivery-read" aria-label="مقروءة" />;
@@ -140,7 +151,7 @@ function MessageItem({
             </p>
           )
         )}
-        {message.error && <p className="delivery-failed">{message.error}</p>}
+        {message.error && <p className="delivery-failed">{errorText(message.error)}</p>}
         <div className="message-footer">
           {onReply && message.wa_message_id && (
             <Button
