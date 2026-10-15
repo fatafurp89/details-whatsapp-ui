@@ -1,0 +1,27 @@
+[Unit]
+Description=Details WhatsApp new frontend (واجهة واتساب ديتيلز الجديدة) on 127.0.0.1:3401
+After=network-online.target details-whatsapp.service
+Wants=network-online.target
+
+[Service]
+User=whatsapp
+Group=whatsapp
+WorkingDirectory=/opt/details-whatsapp-ui
+Environment=PORT=3401
+Environment=HOST=127.0.0.1
+ExecStart=/usr/bin/node /opt/details-whatsapp-ui/.output/server/index.mjs
+Restart=always
+RestartSec=3
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/tmp
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target
