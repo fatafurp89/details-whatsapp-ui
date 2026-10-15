@@ -233,6 +233,29 @@ export const getDetail = (id: number, before?: number, signal?: AbortSignal) =>
     signal: signal ?? null,
   });
 export const getEmployees = () => api<{ employees: Employee[] }>("/api/employees");
+export type Template = {
+  id: number;
+  name: string;
+  language: string;
+  category: string | null;
+  status: string;
+  enabled: boolean;
+  body_text: string | null;
+  components: unknown;
+};
+export const getTemplates = () =>
+  api<{ templates: Template[]; can_manage: boolean }>("/api/templates");
+export const sendTemplate = (id: number, name: string, language: string, params: string[]) =>
+  api<{ ok: true; id: number; wa_message_id: string; signed: boolean }>(
+    `/api/conversations/${id}/template`,
+    { method: "POST", body: JSON.stringify({ name, language, params }) },
+  );
+export function templateParamCount(bodyText: string | null) {
+  if (!bodyText) return 0;
+  const matches = bodyText.match(/\{\{(\d+)\}\}/g) || [];
+  const numbers = matches.map((m) => Number(m.replace(/\D/g, "")));
+  return numbers.length ? Math.max(...numbers) : 0;
+}
 export const reply = (id: number, text: string, reply_to?: string) =>
   api<{ ok: true; id: number; wa_message_id: string; text: string; signed: boolean }>(
     `/api/conversations/${id}/reply`,

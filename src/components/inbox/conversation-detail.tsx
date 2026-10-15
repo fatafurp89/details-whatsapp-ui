@@ -26,14 +26,18 @@ import {
   canReply,
   getDetail,
   getEmployees,
+  getTemplates,
   mediaPath,
   POLL_INTERVAL,
   reply,
+  sendTemplate,
   setStatus,
+  templateParamCount,
   type Detail,
   type Employee,
   type Me,
   type Message,
+  type Template,
 } from "@/lib/inbox-api";
 import { dateLabel, initials, time } from "./primitives";
 export const detailOptions = (id: number) => ({
@@ -342,6 +346,95 @@ function ContactPanel({ detail, me }: { detail: Detail; me: Me }) {
     </aside>
   );
 }
+function TemplateDialog({
+  conversationId,
+  onClose,
+  onSent,
+}: {
+  conversationId: number;
+  onClose: () => void;
+  onSent: () => void;
+}) {
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [selected, setSelected] = useState<Template | null>(null);
+  const [params, setParams] = useState<string[]>([]);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
+  useEffect(() => {
+    let cancelled = false;
+    getTemplates()
+      .then((result) => { if (!cancelled) setTemplates(result.templates); })
+      .catch((e) => { if (!cancelled) setLoadError(e instanceof Error ? e.message : "تعذّر تحميل القوالب"); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+  function pick(template: Template) {
+    setSelected(template);
+    setParams(Array.from({ length: templateParamCount(template.body_text) }, () => ""));
+    setSendError("");
+  }
+  const preview = selected?.body_text
+    ? params.reduce((text, value, i) => text.replace(new RegExp(`\\{\\{${i + 1}\\}\\}`, "g"), value || `{{${i + 1}}}`), selected.body_text)
+    : "";
+  async function submit() {
+    if (!selected) return;
+    setSending(true); setSendError("");
+    try {
+      await sendTemplate(conversationId, selected.name, selected.language, params);
+      onSent();
+    } catch (e) {
+      setSendError(e instanceof Error ? e.message : "تعذّر إرسال القالب");
+    } finally {
+      setSending(false);
+    }
+  }
+  return (
+    <div className="template-dialog" role="presentation" onClick={onClose}>
+      <section role="dialog" aria-modal="true" aria-labelledby="template-title" onClick={(event) => event.stopPropagation()}>
+        <h3 id="template-title">إرسال قالب معتمد</h3>
+        {loading ? (
+          <p>جارٍ تحميل القوالب المتاحة…</p>
+        ) : loadError ? (
+          <p role="alert" className="delivery-failed">{loadError}</p>
+        ) : !templates.length ? (
+          <p>لا توجد قوالب معتمدة ومفعّلة حاليًا. يلزم مزامنة القوالب من إعدادات واتساب أولًا.</p>
+        ) : !selected ? (
+          <div className="space-y-2">
+            {templates.map((t) => (
+              <Button key={`${t.name}-${t.language}`} variant="outline" className="w-full justify-start" onClick={() => pick(t)}>
+                {t.name} <span className="text-xs text-muted-foreground">({t.language})</span>
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-xs text-muted-foreground">{selected.name} ({selected.language})</p>
+            <div className="rounded-md border bg-muted p-3 text-sm" dir="auto">{preview}</div>
+            {params.map((value, i) => (
+              <input
+                key={i}
+                aria-label={`المتغيّر ${i + 1}`}
+                placeholder={`نص المتغيّر {{${i + 1}}}`}
+                value={value}
+                onChange={(event) => setParams((prev) => prev.map((v, idx) => (idx === i ? event.target.value : v)))}
+              />
+            ))}
+            {sendError && <p role="alert" className="delivery-failed">{sendError}</p>}
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setSelected(null)} disabled={sending}>رجوع</Button>
+              <Button onClick={submit} disabled={sending || params.some((v) => !v.trim())}>
+                {sending ? <LoaderCircle className="animate-spin" /> : <Send />} إرسال
+              </Button>
+            </div>
+          </div>
+        )}
+        <Button variant="ghost" className="mt-2 w-full" onClick={onClose} disabled={sending}>إغلاق</Button>
+      </section>
+    </div>
+  );
+}
 export function ConversationDetail({ id, me, back }: { id: number; me: Me; back: () => void }) {
   const { data: detail, error: refreshError } = useSuspenseQuery(detailOptions(id));
   const query = useQueryClient();
@@ -635,22 +728,17 @@ export function ConversationDetail({ id, me, back }: { id: number; me: Me; back:
         {contactOpen && hasContact && <ContactPanel detail={detail} me={me} />}
       </div>
       {templateOpen && (
-        <div className="template-dialog" role="presentation" onClick={() => setTemplateOpen(false)}>
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="template-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h3 id="template-title">إرسال قالب معتمد</h3>
-            <p>
-              إرسال القوالب غير متاح في هذه النسخة بعد. يلزم ربط خدمة القوالب المعتمدة قبل الإرسال.
-            </p>
-            <Button autoFocus onClick={() => setTemplateOpen(false)}>
-              إغلاق
-            </Button>
-          </section>
-        </div>
+        <TemplateDialog
+          conversationId={id}
+          onClose={() => setTemplateOpen(false)}
+          onSent={async () => {
+            setTemplateOpen(false);
+            await Promise.all([
+              query.invalidateQueries({ queryKey: ["conversation", id] }),
+              query.invalidateQueries({ queryKey: ["conversations"] }),
+            ]);
+          }}
+        />
       )}
     </>
   );
