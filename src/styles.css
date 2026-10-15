@@ -41,6 +41,7 @@
   --secondary: oklch(0.96 0.007 160);
   --muted: oklch(0.958 0.005 160);
   --muted-foreground: oklch(0.55 0.02 230);
+  --muted-strong: oklch(0.4 0.03 235);
   --accent: oklch(0.953 0.022 164);
   --border: oklch(0.92 0.009 160);
   --destructive: oklch(0.57 0.18 25);
@@ -524,7 +525,7 @@
   flex-wrap: wrap;
 }
 .category-badge {
-  font-size: 9px;
+  font-size: 10px;
   padding: 3px 7px;
   border-radius: 4px;
   background: var(--muted);
@@ -550,8 +551,8 @@
   display: flex;
   gap: 4px;
   align-items: center;
-  font-size: 9px;
-  color: var(--muted-foreground);
+  font-size: 10px;
+  color: var(--muted-strong);
 }
 .conversation-content {
   flex: 1;
@@ -562,7 +563,7 @@
 }
 .conversation-header {
   min-height: 64px;
-  padding: 10px 21px;
+  padding: 11px 21px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -584,9 +585,8 @@
 }
 .contact-heading p {
   font-size: 12px;
-  font-weight: 600;
-  color: var(--foreground);
-  margin-top: 4px;
+  color: var(--muted-strong);
+  margin-top: 5px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -629,10 +629,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 6px 21px;
+  padding: 7px 22px;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--foreground);
+  color: var(--muted-strong);
   border-bottom: 1px solid var(--border);
   background: var(--card);
 }
@@ -640,14 +639,14 @@
   display: flex;
   gap: 6px;
   align-items: center;
-  font-weight: 700;
   color: var(--primary);
+  font-weight: 700;
 }
 .window-strip.closed span {
-  color: color-mix(in oklch, var(--gold) 70%, var(--destructive));
+  color: var(--gold);
 }
 .window-strip small {
-  font-weight: 600;
+  font-weight: 700;
 }
 .messages {
   padding: 22px 25px 12px;
@@ -663,11 +662,12 @@
 }
 .day-separator span {
   background: var(--card);
-  color: var(--muted-foreground);
+  color: var(--muted-strong);
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 5px 12px;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: 700;
 }
 .message-row {
   display: flex;
@@ -698,7 +698,7 @@
 }
 .message-sender {
   color: var(--primary);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   display: block;
   margin-bottom: 4px;
@@ -708,9 +708,9 @@
   justify-content: flex-end;
   align-items: center;
   gap: 5px;
-  color: var(--muted-foreground);
+  color: var(--muted-strong);
   margin-top: 7px;
-  font-size: 9px;
+  font-size: 10px;
 }
 .delivery-read {
   color: var(--read);
@@ -760,7 +760,7 @@
   gap: 6px;
   color: var(--primary);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   margin-bottom: 9px;
 }
 .composer-input {
@@ -799,8 +799,8 @@
   justify-content: space-between;
   gap: 10px;
   margin-top: 10px;
-  color: var(--muted-foreground);
-  font-size: 9px;
+  color: var(--muted-strong);
+  font-size: 10px;
   line-height: 1.7;
 }
 .reply-reference {
@@ -831,11 +831,13 @@
 }
 .closed-window h4 {
   margin: 0 0 5px;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
 }
 .closed-window p {
-  font-size: 11px;
-  color: var(--muted-foreground);
+  font-size: 12px;
+  color: var(--muted-strong);
   line-height: 1.7;
 }
 .contact-panel {
@@ -884,8 +886,9 @@
   margin-bottom: 18px;
 }
 .contact-fields dt {
-  color: var(--muted-foreground);
-  font-size: 10px;
+  color: var(--muted-strong);
+  font-size: 11px;
+  font-weight: 700;
   margin-bottom: 6px;
 }
 .contact-fields dd {
@@ -920,8 +923,8 @@
   white-space: pre-wrap;
 }
 .note small {
-  font-size: 9px;
-  color: var(--muted-foreground);
+  font-size: 10px;
+  color: var(--muted-strong);
   display: block;
   margin-top: 8px;
 }
@@ -968,8 +971,8 @@
   display: flex;
   justify-content: space-between;
   margin-top: 11px;
-  font-size: 9px;
-  color: var(--muted-foreground);
+  font-size: 10px;
+  color: var(--muted-strong);
   gap: 10px;
 }
 .inline-error {
@@ -1244,10 +1247,10 @@
     font-size: 11px;
   }
   .contact-heading h3 {
-    font-size: 12px;
+    font-size: 14px;
   }
   .contact-heading p {
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 5px;
   }
   .mobile-back {
@@ -1262,8 +1265,8 @@
     justify-content: flex-end;
   }
   .window-strip {
-    padding: 10px 13px;
-    font-size: 9px;
+    padding: 7px 13px;
+    font-size: 11px;
   }
   .messages {
     padding: 20px 14px 10px;
@@ -1275,10 +1278,10 @@
     padding: 12px;
   }
   .composer-meta {
-    font-size: 8px;
+    font-size: 9px;
   }
   .footer-bar {
-    font-size: 8px;
+    font-size: 9px;
   }
   .contact-panel {
     top: 117px;

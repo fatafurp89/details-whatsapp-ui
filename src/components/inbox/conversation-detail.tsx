@@ -718,7 +718,7 @@ export function ConversationDetail({ id, me, back }: { id: number; me: Me; back:
                 <p>يمكن متابعة التواصل بإرسال قالب معتمد.</p>
               </div>
               {can(me, "whatsapp.templates.send") && (
-                <Button size="sm" variant="outline" onClick={() => setTemplateOpen(true)}>
+                <Button size="sm" className="action-button" onClick={() => setTemplateOpen(true)}>
                   إرسال قالب معتمد
                 </Button>
               )}
